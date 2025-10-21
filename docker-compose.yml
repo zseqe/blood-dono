@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: blood_donor_db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: donor_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d donor_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    container_name: blood_donor_backend
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: "postgresql://user:password@db/donor_db"
+      SECRET_KEY: "a_very_secret_key_that_should_be_changed_in_production"
+      ALGORITHM: "HS256"
+      ACCESS_TOKEN_EXPIRE_MINUTES: 60
+    volumes:
+      - ./backend/app:/code/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    container_name: blood_donor_frontend
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
