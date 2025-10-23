@@ -5,6 +5,7 @@ interface AuthState {
   token: string | null;
   setToken: (token: string | null) => void;
   isAuthenticated: () => boolean;
+  logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -13,6 +14,7 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       setToken: (token) => set({ token }),
       isAuthenticated: () => !!get().token,
+      logout: () => set({ token: null }),
     }),
     {
       name: 'auth-storage', // local storage key

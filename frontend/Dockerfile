@@ -3,22 +3,13 @@
 FROM node:18-alpine AS builder
 WORKDIR /app
 
-# Copy necessary config and source code first
-COPY next.config.mjs ./
-COPY tsconfig.json ./
-COPY tailwind.config.ts ./
-COPY postcss.config.js ./
-COPY components.json ./
-COPY ./public ./public
-COPY ./app ./app
-COPY ./lib ./lib
-COPY ./hooks ./hooks
-COPY ./components ./components
-
-# Copy package.json and install dependencies
+# Copy package.json and install dependencies first (for better caching)
 COPY package*.json ./
 RUN npm cache clean --force
-RUN npm install
+RUN npm ci
+
+# Copy all necessary files for build
+COPY . .
 
 # Build the production-ready static files
 RUN npm run build
@@ -27,10 +18,12 @@ RUN npm run build
 FROM node:18-alpine
 WORKDIR /app
 ENV NODE_ENV production
+
+# Copy built application and necessary files
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.mjs ./next.config.mjs
 
 EXPOSE 3000
 CMD ["npm", "start"]

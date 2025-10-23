@@ -3,8 +3,15 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List, Dict, Any
-from .. import models, schemas
-from .auth import get_db, get_current_hospital
+try:
+    from .. import models, schemas
+    from .auth import get_db, get_current_hospital
+except ImportError:
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    import models, schemas
+    from routers.auth import get_db, get_current_hospital
 
 router = APIRouter(prefix="/hospitals", tags=["Hospitals"])
 

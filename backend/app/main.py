@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import auth, donors, hospitals
-from .models import create_db_tables
+from . import models
 import logging
 
 app = FastAPI(
@@ -26,7 +26,7 @@ logger = logging.getLogger("uvicorn.error")
 @app.on_event("startup")
 async def on_startup():
     try:
-        create_db_tables()
+        models.create_db_tables()
         logger.info("Database tables ensured on startup.")
     except Exception as e:
         logger.exception("Failed to create/ensure database tables on startup: %s", e)

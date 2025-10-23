@@ -3,8 +3,11 @@ import random
 import numpy as np
 from faker import Faker
 from datetime import datetime, timedelta
-from .models import SessionLocal, Hospital, Donor, BloodType, DonorStatus, Base, engine, create_db_tables
-from .routers.auth import get_password_hash
+from models import SessionLocal, Hospital, Donor, BloodType, DonorStatus, Base, engine, create_db_tables
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from routers.auth import get_password_hash
 
 NUM_OTHER_HOSPITALS = 4
 DONORS_PER_HOSPITAL = 200

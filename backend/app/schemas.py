@@ -2,7 +2,13 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import List, Optional
 from datetime import datetime
-from .models import BloodType, DonorStatus
+try:
+    from .models import BloodType, DonorStatus
+except ImportError:
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    from models import BloodType, DonorStatus
 
 class DonorBase(BaseModel):
     full_name: str

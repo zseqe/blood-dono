@@ -2,9 +2,16 @@
 import pandas as pd
 import numpy as np
 from datetime import datetime
-from .models import BloodType
+try:
+    from .models import BloodType
+    from .schemas import MatchExplanation
+except ImportError:
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    from models import BloodType
+    from schemas import MatchExplanation
 from typing import List, Dict, Any
-from .schemas import MatchExplanation
 
 COMPATIBILITY_MATRIX = { "A+": ["A+", "A-", "O+", "O-"], "A-": ["A-", "O-"], "B+": ["B+", "B-", "O+", "O-"], "B-": ["B-", "O-"], "AB+": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"], "AB-": ["A-", "B-", "AB-", "O-"], "O+": ["O+", "O-"], "O-": ["O-"], }
 
